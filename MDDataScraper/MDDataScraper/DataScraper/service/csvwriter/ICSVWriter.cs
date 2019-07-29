@@ -8,6 +8,6 @@ namespace MDDataScraper.DataScraper.service.csvwriter
 {
     public interface ICSVWriter
     {
-        void AppendToFile(string fileName, List<List<string>> data);
+        void AppendToFile(string fileName, List<List<string>> data, List<string> headings);
     }
 }

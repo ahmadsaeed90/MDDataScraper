@@ -24,10 +24,12 @@ namespace MDDataScraper.DataScraper.service.scraper
         private readonly ICSVReader _csvReader;
         private readonly ICSVWriter _csvWriter;
 
-        public ScraperService(IConfigService configService, IAppLogger appLogger)
+        public ScraperService(IConfigService configService, IAppLogger appLogger, ICSVReader csvReader, ICSVWriter csvWriter)
         {
             _configService = configService;
             _logger = appLogger.GetLogger();
+            _csvReader = csvReader;
+            _csvWriter = csvWriter;
         }
 
         public void ScrapData()
@@ -51,7 +53,8 @@ namespace MDDataScraper.DataScraper.service.scraper
                 if (IsNewData(tableData, page, dateCol))
                 {
                     _logger.Info("FOUND new data on web, appending to file");
-                    _csvWriter.AppendToFile(page.ExportFile, tableData);
+                    var headings = page.ColumnMappings.Select(x => x.HeadingInFile).ToList();
+                    _csvWriter.AppendToFile(page.ExportFile, tableData, headings);
                     _logger.Info("done");
                 }
                 else
@@ -59,39 +62,6 @@ namespace MDDataScraper.DataScraper.service.scraper
                     _logger.Info("NOT found new data on web");
                 }
             }
-
-            //var url = @"https://www.barchart.com/futures/quotes/BVY00/price-history/historical";
-
-            //using (var driver = new ChromeDriver())
-            //{
-            //    // Go to the home page
-            //    driver.Navigate().GoToUrl(url);
-
-            //    //driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-            //    Console.WriteLine("Done loading");
-
-            //    new WebDriverWait(driver, TimeSpan.FromSeconds(20))
-            //        .Until(ExpectedConditions.ElementExists((By.ClassName("bc-table-scrollable"))));
-
-            //    var tableRows = driver.FindElements(By.XPath("//*[@id=\"main-content-column\"]/div/div[4]/div/div[2]/div/div/ng-transclude/table/tbody/tr"));
-            //    Console.WriteLine("Table rows = " + tableRows.Count);
-
-            //    foreach (var row in tableRows)
-            //    {
-            //        TraverseRow(row);
-            //    }
-            //}
-            //var web = new HtmlWeb();
-
-            //Console.WriteLine("Loading web page " + url);
-            //var htmlDoc = web.LoadFromBrowser(url);
-            //htmlDoc.Save("test.html");
-            //Console.WriteLine("Done loading page");
-            //System.IO.File.WriteAllText(@"page.txt", htmlDoc.ParsedText);
-
-            ////var node = htmlDoc.DocumentNode.SelectSingleNode("/div[@name='bc-table-scrollable']");
-
-            ////Console.WriteLine("Node Name: " + node.Name + "\n" + node.OuterHtml);
         }
 
         private bool IsNewData(List<List<string>> tableData, ScrapPage page, ColumnMapping dateCol)

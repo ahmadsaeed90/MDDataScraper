@@ -11,6 +11,9 @@ namespace MDDataScraper.DataScraper.service.csvreader
     {
         public string GetLastDate(string fileName, int dateColIndex)
         {
+            if (!File.Exists(fileName))
+                return null;
+
             var allLines = File.ReadLines(fileName);
 
             if (allLines.Count() <= 1)
