@@ -167,15 +167,19 @@ namespace MDDataScraper.DataScraper.service.scraper
                 strValue = colElem.GetAttribute("innerHTML");
 
                 // Apply transformation
+                if (columnMapping.IsDate == true && columnMapping.OutputDateFormat != columnMapping.WebDateFormat)
+                {
+                    strValue = ConvertDateFormat(strValue, columnMapping.WebDateFormat, columnMapping.OutputDateFormat);
+                }
             }
 
             return strValue;
         }
 
-        private void TraverseRow(IWebElement row)
+        private string ConvertDateFormat(string strValue, string inputDateFormat, string outputDateFormat)
         {
-            var date = row.FindElement(By.XPath(".//td/div/span/span/span"));
-            Console.WriteLine(date.GetAttribute("innerHTML"));
+            var dateTime = DateTime.ParseExact(strValue, inputDateFormat, CultureInfo.InvariantCulture);
+            return dateTime.ToString(outputDateFormat);
         }
     }
 }
