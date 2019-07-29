@@ -1,0 +1,20 @@
+﻿{
+  "ScrapPages": [
+    {
+      "url": "https://www.barchart.com/futures/quotes/BVY00/price-history/historical",
+      "exportFile": "BVY00.csv",
+      "tableId": "",
+      "tableClass": "bc-table-scrollable",
+      "tableRowsXPath": "//*[@id='main-content-column']/div/div[4]/div/div[2]/div/div/ng-transclude/table/tbody/tr",
+      "columnMappings": [
+        { "webColumnRelativeXPath": "td[1]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[2]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[3]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[4]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[6]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[7]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[8]/div/span/span/span" }
+      ]
+    }
+  ]
+}
