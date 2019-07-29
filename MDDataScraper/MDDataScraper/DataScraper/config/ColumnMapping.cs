@@ -12,5 +12,11 @@ namespace MDDataScraper.DataScraper.config
         public string WebColumnRelativeXPath { get; set; }
 
         public string Value { get; set; }
+
+        public bool? IsDate { get; set; }
+
+        public string WebDateFormat { get; set; }
+
+        public string OutputDateFormat { get; set; }
     }
 }

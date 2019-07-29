@@ -9,10 +9,18 @@ namespace MDDataScraper.DataScraper.service.csvreader
 {
     public class CSVReader : ICSVReader
     {
-        public string GetLastDate(string fileName)
+        public string GetLastDate(string fileName, int dateColIndex)
         {
-            var lines = File.ReadLines(fileName).Last();
-            return "";
+            var allLines = File.ReadLines(fileName);
+
+            if (allLines.Count() <= 1)
+                return null;
+
+            var lastLine = allLines.Last();
+            var tokens = lastLine.Split(new char[] { ',' });
+
+            var dateStr = tokens[dateColIndex];
+            return dateStr;
         }
     }
 }

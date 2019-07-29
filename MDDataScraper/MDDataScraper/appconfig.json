@@ -9,7 +9,7 @@
       "columnMappings": [
         { "webColumnRelativeXPath": "", "value":  "IGE" },
         { "webColumnRelativeXPath": "td[1]/div/span/span/span" },
-        { "webColumnRelativeXPath": "td[2]/div/span/span/span" },
+        { "webColumnRelativeXPath": "td[2]/div/span/span/span", "isDate": "true", "webDateFormat": "mm/dd/YY", "outputDateFormat":"mm/dd/YYYY" },
         { "webColumnRelativeXPath": "td[3]/div/span/span/span" },
         { "webColumnRelativeXPath": "td[4]/div/span/span/span" },
         { "webColumnRelativeXPath": "td[6]/div/span/span/span" },

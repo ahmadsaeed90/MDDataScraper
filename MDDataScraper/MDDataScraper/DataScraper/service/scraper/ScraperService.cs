@@ -2,11 +2,14 @@
 using MDDataScraper.DataScraper.config;
 using MDDataScraper.DataScraper.logger;
 using MDDataScraper.DataScraper.service.config;
+using MDDataScraper.DataScraper.service.csvreader;
+using MDDataScraper.DataScraper.service.csvwriter;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,8 +19,10 @@ namespace MDDataScraper.DataScraper.service.scraper
 {
     public class ScraperService
     {
-        private IConfigService _configService;
-        private ILog _logger;
+        private readonly IConfigService _configService;
+        private readonly ILog _logger;
+        private readonly ICSVReader _csvReader;
+        private readonly ICSVWriter _csvWriter;
 
         public ScraperService(IConfigService configService, IAppLogger appLogger)
         {
@@ -35,6 +40,24 @@ namespace MDDataScraper.DataScraper.service.scraper
             {
                var tableData = ScrapTableData(page);
                 _logger.Info(tableData);
+
+                var dateCol = page.ColumnMappings.Find(x => x.IsDate == true);
+
+                if (dateCol == null)
+                {
+                    throw new Exception("Cannot find date column in the column mappings");
+                }
+
+                if (IsNewData(tableData, page, dateCol))
+                {
+                    _logger.Info("FOUND new data on web, appending to file");
+                    _csvWriter.AppendToFile(page.ExportFile, tableData);
+                    _logger.Info("done");
+                }
+                else
+                {
+                    _logger.Info("NOT found new data on web");
+                }
             }
 
             //var url = @"https://www.barchart.com/futures/quotes/BVY00/price-history/historical";
@@ -69,6 +92,25 @@ namespace MDDataScraper.DataScraper.service.scraper
             ////var node = htmlDoc.DocumentNode.SelectSingleNode("/div[@name='bc-table-scrollable']");
 
             ////Console.WriteLine("Node Name: " + node.Name + "\n" + node.OuterHtml);
+        }
+
+        private bool IsNewData(List<List<string>> tableData, ScrapPage page, ColumnMapping dateCol)
+        {
+            var dateColIndex = page.ColumnMappings.IndexOf(dateCol);
+
+            var latestDateInFileStr = _csvReader.GetLastDate(page.ExportFile, dateColIndex);
+            _logger.Info("latestDateInFileStr = " + latestDateInFileStr);
+
+            if (string.IsNullOrWhiteSpace(latestDateInFileStr))
+                return true;
+
+            var latestDateInFile = DateTime.ParseExact(latestDateInFileStr, dateCol.OutputDateFormat, CultureInfo.InvariantCulture);
+
+            var latestDateFromWebStr = tableData[0][dateColIndex];
+            var lastestDateFromWeb = DateTime.ParseExact(latestDateFromWebStr, dateCol.OutputDateFormat, CultureInfo.InvariantCulture);
+            var result = lastestDateFromWeb > latestDateInFile;
+
+            return result;
         }
 
         private List<List<string>> ScrapTableData(ScrapPage page)

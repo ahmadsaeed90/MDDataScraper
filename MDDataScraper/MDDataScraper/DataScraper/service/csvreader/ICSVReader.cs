@@ -8,6 +8,6 @@ namespace MDDataScraper.DataScraper.service.csvreader
 {
     public interface ICSVReader
     {
-        string GetLastDate(string fileName);
+        string GetLastDate(string fileName, int dateColIndex);
     }
 }

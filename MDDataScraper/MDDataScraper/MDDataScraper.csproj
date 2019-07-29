@@ -70,6 +70,8 @@
     <Compile Include="DataScraper\service\config\IConfigService.cs" />
     <Compile Include="DataScraper\service\csvreader\CSVReader.cs" />
     <Compile Include="DataScraper\service\csvreader\ICSVReader.cs" />
+    <Compile Include="DataScraper\service\csvwriter\CSVWriter.cs" />
+    <Compile Include="DataScraper\service\csvwriter\ICSVWriter.cs" />
     <Compile Include="DataScraper\service\scraper\IScraperService.cs" />
     <Compile Include="DataScraper\service\scraper\ScraperService.cs" />
     <Compile Include="Program.cs" />
