@@ -10,5 +10,7 @@ namespace MDDataScraper.DataScraper.config
     public class ColumnMapping
     {
         public string WebColumnRelativeXPath { get; set; }
+
+        public string Value { get; set; }
     }
 }

@@ -113,10 +113,19 @@ namespace MDDataScraper.DataScraper.service.scraper
 
         private string ReadColumnData(IWebElement row, ColumnMapping columnMapping)
         {
-            var colElem = row.FindElement(By.XPath("./" + columnMapping.WebColumnRelativeXPath));
-            var strValue = colElem.GetAttribute("innerHTML");
+            string strValue;
 
-            // Apply transformation
+            if (!string.IsNullOrWhiteSpace(columnMapping.Value))
+            {
+                strValue = columnMapping.Value;
+            }
+            else
+            {
+                var colElem = row.FindElement(By.XPath("./" + columnMapping.WebColumnRelativeXPath));
+                strValue = colElem.GetAttribute("innerHTML");
+
+                // Apply transformation
+            }
 
             return strValue;
         }
