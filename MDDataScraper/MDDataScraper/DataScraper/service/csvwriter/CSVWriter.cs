@@ -17,8 +17,8 @@ namespace MDDataScraper.DataScraper.service.csvwriter
                 File.AppendAllText(fileName, headingsStr + Environment.NewLine);
             }
 
-            var text = string.Join(Environment.NewLine, rows.Select(x => string.Join(",", x)));
-            File.AppendAllText(fileName, text);
+            var text = string.Join(Environment.NewLine, rows.Select(x => string.Join(",", x) + ","));
+            File.AppendAllText(fileName, text + Environment.NewLine);
         }
     }
 }

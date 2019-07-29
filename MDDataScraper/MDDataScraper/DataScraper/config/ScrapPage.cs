@@ -11,7 +11,7 @@ namespace MDDataScraper.DataScraper.config
     {
         public string URL { get; set; }
 
-        public string ExportFile { get; set; }
+        public string FilePath { get; set; }
 
         public string TableClass { get; set; }
 

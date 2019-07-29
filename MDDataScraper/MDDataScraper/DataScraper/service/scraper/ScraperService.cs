@@ -50,11 +50,13 @@ namespace MDDataScraper.DataScraper.service.scraper
                     throw new Exception("Cannot find date column in the column mappings");
                 }
 
+                tableData.Reverse();
+
                 if (IsNewData(tableData, page, dateCol))
                 {
                     _logger.Info("FOUND new data on web, appending to file");
                     var headings = page.ColumnMappings.Select(x => x.HeadingInFile).ToList();
-                    _csvWriter.AppendToFile(page.ExportFile, tableData, headings);
+                    _csvWriter.AppendToFile(page.FilePath, tableData, headings);
                     _logger.Info("done");
                 }
                 else
@@ -68,7 +70,7 @@ namespace MDDataScraper.DataScraper.service.scraper
         {
             var dateColIndex = page.ColumnMappings.IndexOf(dateCol);
 
-            var latestDateInFileStr = _csvReader.GetLastDate(page.ExportFile, dateColIndex);
+            var latestDateInFileStr = _csvReader.GetLastDate(page.FilePath, dateColIndex);
             _logger.Info("latestDateInFileStr = " + latestDateInFileStr);
 
             if (string.IsNullOrWhiteSpace(latestDateInFileStr))
