@@ -52,7 +52,6 @@ namespace MDDataScraper.DataScraper.service.scraper
 
                 var filtered = FilterNewRecords(tableData, page, dateCol);
                 _logger.Info("new records = " + filtered.Count);
-                _logger.Info("filtered = " + filtered);
 
                 filtered.Reverse();
 
