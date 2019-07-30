@@ -40,7 +40,7 @@ namespace MDDataScraper.DataScraper.service.scraper
 
             foreach (var page in pages)
             {
-               var tableData = ScrapTableData(page);
+                var tableData = ScrapTableData(page);
                 _logger.Info(tableData);
 
                 var dateCol = page.ColumnMappings.Find(x => x.IsDate == true);
@@ -50,13 +50,17 @@ namespace MDDataScraper.DataScraper.service.scraper
                     throw new Exception("Cannot find date column in the column mappings");
                 }
 
-                tableData.Reverse();
+                var filtered = FilterNewRecords(tableData, page, dateCol);
+                _logger.Info("new records = " + filtered.Count);
+                _logger.Info("filtered = " + filtered);
 
-                if (IsNewData(tableData, page, dateCol))
+                filtered.Reverse();
+
+                if (filtered.Count > 0)
                 {
                     _logger.Info("FOUND new data on web, appending to file");
                     var headings = page.ColumnMappings.Select(x => x.HeadingInFile).ToList();
-                    _csvWriter.AppendToFile(page.FilePath, tableData, headings);
+                    _csvWriter.AppendToFile(page.FilePath, filtered, headings);
                     _logger.Info("done");
                 }
                 else
@@ -66,7 +70,7 @@ namespace MDDataScraper.DataScraper.service.scraper
             }
         }
 
-        private bool IsNewData(List<List<string>> tableData, ScrapPage page, ColumnMapping dateCol)
+        private List<List<string>> FilterNewRecords(List<List<string>> tableData, ScrapPage page, ColumnMapping dateCol)
         {
             var dateColIndex = page.ColumnMappings.IndexOf(dateCol);
 
@@ -74,15 +78,14 @@ namespace MDDataScraper.DataScraper.service.scraper
             _logger.Info("latestDateInFileStr = " + latestDateInFileStr);
 
             if (string.IsNullOrWhiteSpace(latestDateInFileStr))
-                return true;
+                return tableData;   //all records are new
 
             var latestDateInFile = DateTime.ParseExact(latestDateInFileStr, dateCol.OutputDateFormat, CultureInfo.InvariantCulture);
 
-            var latestDateFromWebStr = tableData[0][dateColIndex];
-            var lastestDateFromWeb = DateTime.ParseExact(latestDateFromWebStr, dateCol.OutputDateFormat, CultureInfo.InvariantCulture);
-            var result = lastestDateFromWeb > latestDateInFile;
+            var filtered = tableData.Where(x => 
+                    DateTime.ParseExact(x[dateColIndex], dateCol.OutputDateFormat, CultureInfo.InvariantCulture) > latestDateInFile);
 
-            return result;
+            return filtered.ToList();
         }
 
         private List<List<string>> ScrapTableData(ScrapPage page)
