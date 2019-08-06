@@ -40,6 +40,12 @@ namespace MDDataScraper.DataScraper.service.scraper
 
             foreach (var page in pages)
             {
+                if (page.Ignore)
+                {
+                    _logger.Info("Ignoring Page: " + page.URL);
+                    continue;
+                }
+
                 var tableData = ScrapTableData(page);
                 _logger.Info(tableData);
 
@@ -131,6 +137,7 @@ namespace MDDataScraper.DataScraper.service.scraper
         {
             string strValue;
 
+            // Replace with fixed value from column setting if any
             if (!string.IsNullOrWhiteSpace(columnMapping.Value))
             {
                 strValue = columnMapping.Value;
@@ -138,7 +145,11 @@ namespace MDDataScraper.DataScraper.service.scraper
             else
             {
                 var colElem = row.FindElement(By.XPath("./" + columnMapping.WebColumnRelativeXPath));
-                strValue = colElem.GetAttribute("innerHTML");
+                strValue = colElem.GetAttribute("innerHTML") ?? string.Empty;
+
+                strValue = Sanitize(strValue);
+
+                strValue = ApplyReplace(strValue, columnMapping.Replace);
 
                 // Apply transformation
                 if (columnMapping.IsDate == true && columnMapping.OutputDateFormat != columnMapping.WebDateFormat)
@@ -150,10 +161,33 @@ namespace MDDataScraper.DataScraper.service.scraper
             return strValue;
         }
 
+        private string ApplyReplace(string strValue, IDictionary<string, string> replace)
+        {
+            if (replace != null && replace.Any())
+            {
+                foreach (var x in replace)
+                {
+                    strValue = strValue.Replace(x.Key, x.Value);
+                }
+            }
+            return strValue;
+        }
+
+        private string Sanitize(string str)
+        {
+            // Remove comma from value
+            str = str.Replace(",", "");
+
+            return str;
+        }
+
         private string ConvertDateFormat(string strValue, string inputDateFormat, string outputDateFormat)
         {
             var dateTime = DateTime.ParseExact(strValue, inputDateFormat, CultureInfo.InvariantCulture);
             return dateTime.ToString(outputDateFormat);
         }
+
+        
+
     }
 }

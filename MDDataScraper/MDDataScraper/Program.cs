@@ -16,9 +16,18 @@ namespace MDDataScraper
         [STAThread]
         static void Main(string[] args)
         {
-            new ScraperService(new ConfigService(), new AppLogger(),
-                new CSVReader(), new CSVWriter()
-                ).ScrapData();
+            var logger = new AppLogger();
+
+            try
+            {
+                new ScraperService(new ConfigService(), logger,
+                    new CSVReader(), new CSVWriter()
+                    ).ScrapData();
+            }
+            catch (Exception e)
+            {
+                logger.GetLogger().Error("Fatal error in program", e);
+            }
         }
     }
 }

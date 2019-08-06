@@ -20,5 +20,7 @@ namespace MDDataScraper.DataScraper.config
         public string WebDateFormat { get; set; }
 
         public string OutputDateFormat { get; set; }
+
+        public Dictionary<string, string> Replace { get; set; }
     }
 }

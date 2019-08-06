@@ -20,5 +20,7 @@ namespace MDDataScraper.DataScraper.config
         public string TableRowsXPath { get; set; }
 
         public List<ColumnMapping> ColumnMappings { get; set; }
+
+        public bool Ignore { get; set; }
     }
 }
