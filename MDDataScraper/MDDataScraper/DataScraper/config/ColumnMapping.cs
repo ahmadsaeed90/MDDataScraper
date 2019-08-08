@@ -21,6 +21,6 @@ namespace MDDataScraper.DataScraper.config
 
         public string OutputDateFormat { get; set; }
 
-        public Dictionary<string, string> Replace { get; set; }
+        public List<ReplacePair> Replace { get; set; }
     }
 }

@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="DataScraper\config\AppConfig.cs" />
     <Compile Include="DataScraper\config\ColumnMapping.cs" />
+    <Compile Include="DataScraper\config\ReplacePair.cs" />
     <Compile Include="DataScraper\config\ScrapPage.cs" />
     <Compile Include="DataScraper\logger\AppLogger.cs" />
     <Compile Include="DataScraper\logger\IAppLogger.cs" />

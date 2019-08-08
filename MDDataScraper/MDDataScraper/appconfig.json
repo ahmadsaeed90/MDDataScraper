@@ -61,12 +61,12 @@
       "columnMappings": [
         { "headingInFile": "<ticker>", "webColumnRelativeXPath": "", "value":  "IGE" },
         { "headingInFile": "<date>", "webColumnRelativeXPath": "td[1]/div/span/span/span", "isDate": "true", "webDateFormat": "MM/dd/yy", "outputDateFormat":"MM/dd/yyyy" },
-        { "headingInFile": "<open>", "webColumnRelativeXPath": "td[2]/div/span/span/span", "replace": {"-": "."} },
-        { "headingInFile": "<high>", "webColumnRelativeXPath": "td[3]/div/span/span/span", "replace": {"-": "."} },
-        { "headingInFile": "<low>", "webColumnRelativeXPath": "td[4]/div/span/span/span", "replace": {"-": "."} },
-        { "headingInFile": "<close>", "webColumnRelativeXPath": "td[6]/div/span/span/span", "replace": {"-": "."} },
-        { "headingInFile": "<vol>", "webColumnRelativeXPath": "td[7]/div/span/span/span", "replace": {"-": "."} },
-        { "headingInFile": "<open interest>", "webColumnRelativeXPath": "td[8]/div/span/span/span", "replace": {"-": "."} }
+        { "headingInFile": "<open>", "webColumnRelativeXPath": "td[2]/div/span/span/span", "replace": [{"old": "-", "new": "."}] },
+        { "headingInFile": "<high>", "webColumnRelativeXPath": "td[3]/div/span/span/span", "replace": [{"old": "-", "new": "."}] },
+        { "headingInFile": "<low>", "webColumnRelativeXPath": "td[4]/div/span/span/span" },
+        { "headingInFile": "<close>", "webColumnRelativeXPath": "td[6]/div/span/span/span" },
+        { "headingInFile": "<vol>", "webColumnRelativeXPath": "td[7]/div/span/span/span" },
+        { "headingInFile": "<open interest>", "webColumnRelativeXPath": "td[8]/div/span/span/span" }
       ]
     }
   ]

@@ -161,13 +161,13 @@ namespace MDDataScraper.DataScraper.service.scraper
             return strValue;
         }
 
-        private string ApplyReplace(string strValue, IDictionary<string, string> replace)
+        private string ApplyReplace(string strValue, List<ReplacePair> replace)
         {
             if (replace != null && replace.Any())
             {
                 foreach (var x in replace)
                 {
-                    strValue = strValue.Replace(x.Key, x.Value);
+                    strValue = strValue.Replace(x.Old, x.New);
                 }
             }
             return strValue;
