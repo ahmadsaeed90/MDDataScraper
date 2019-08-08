@@ -101,6 +101,7 @@ namespace MDDataScraper.DataScraper.service.scraper
             {
                 _logger.Info($"Scraping page [{page.URL}]");
                 driver.Navigate().GoToUrl(page.URL);
+                _logger.Info("page loaded");
 
                 // Wait for table to load
                 new WebDriverWait(driver, TimeSpan.FromSeconds(3))
@@ -108,6 +109,7 @@ namespace MDDataScraper.DataScraper.service.scraper
                         string.IsNullOrWhiteSpace(page.TableId) ? By.ClassName(page.TableClass) : By.Id(page.TableId)
                         ));
 
+                _logger.Info("finding rows");
                 var tableRows = driver.FindElements(By.XPath(page.TableRowsXPath));
                 _logger.Info("Table rows count = " + tableRows.Count);
 
@@ -123,6 +125,7 @@ namespace MDDataScraper.DataScraper.service.scraper
 
         private List<string> ReadRowData(IWebElement row, List<ColumnMapping> columnMappings)
         {
+            _logger.Info("Loading row");
             var cols = new List<string>(columnMappings.Count);
 
             for (var i = 0; i < columnMappings.Count; i++)
