@@ -38,39 +38,42 @@ namespace MDDataScraper.DataScraper.service.scraper
             _logger.Info("Loaded configuration");
             var pages = config.ScrapPages;
 
-            foreach (var page in pages)
+            using (var driver = new ChromeDriver())
             {
-                if (page.Ignore)
+                foreach (var page in pages)
                 {
-                    _logger.Info("Ignoring Page: " + page.URL);
-                    continue;
-                }
+                    if (page.Ignore)
+                    {
+                        _logger.Info("Ignoring Page: " + page.URL);
+                        continue;
+                    }
 
-                var tableData = ScrapTableData(page);
-                _logger.Info(tableData);
+                    var tableData = ScrapTableData(page, driver);
+                    _logger.Info(tableData);
 
-                var dateCol = page.ColumnMappings.Find(x => x.IsDate == true);
+                    var dateCol = page.ColumnMappings.Find(x => x.IsDate == true);
 
-                if (dateCol == null)
-                {
-                    throw new Exception("Cannot find date column in the column mappings");
-                }
+                    if (dateCol == null)
+                    {
+                        throw new Exception("Cannot find date column in the column mappings");
+                    }
 
-                var filtered = FilterNewRecords(tableData, page, dateCol);
-                _logger.Info("new records = " + filtered.Count);
+                    var filtered = FilterNewRecords(tableData, page, dateCol);
+                    _logger.Info("new records = " + filtered.Count);
 
-                filtered.Reverse();
+                    filtered.Reverse();
 
-                if (filtered.Count > 0)
-                {
-                    _logger.Info("FOUND new data on web, appending to file");
-                    var headings = page.ColumnMappings.Select(x => x.HeadingInFile).ToList();
-                    _csvWriter.AppendToFile(page.FilePath, filtered, headings);
-                    _logger.Info("done");
-                }
-                else
-                {
-                    _logger.Info("NOT found new data on web");
+                    if (filtered.Count > 0)
+                    {
+                        _logger.Info("FOUND new data on web, appending to file");
+                        var headings = page.ColumnMappings.Select(x => x.HeadingInFile).ToList();
+                        _csvWriter.AppendToFile(page.FilePath, filtered, headings);
+                        _logger.Info("done");
+                    }
+                    else
+                    {
+                        _logger.Info("NOT found new data on web");
+                    }
                 }
             }
         }
@@ -93,32 +96,30 @@ namespace MDDataScraper.DataScraper.service.scraper
             return filtered.ToList();
         }
 
-        private List<List<string>> ScrapTableData(ScrapPage page)
+        private List<List<string>> ScrapTableData(ScrapPage page, ChromeDriver driver)
         {
             var tableData = new List<List<string>>();
+            
+            _logger.Info($"Scraping page [{page.URL}]");
+            driver.Navigate().GoToUrl(page.URL);
+            _logger.Info("page loaded");
 
-            using (var driver = new ChromeDriver())
+            // Wait for table to load
+            new WebDriverWait(driver, TimeSpan.FromSeconds(3))
+                .Until(ExpectedConditions.ElementExists(
+                    string.IsNullOrWhiteSpace(page.TableId) ? By.ClassName(page.TableClass) : By.Id(page.TableId)
+                    ));
+
+            _logger.Info("finding rows");
+            var tableRows = driver.FindElements(By.XPath(page.TableRowsXPath));
+            _logger.Info("Table rows count = " + tableRows.Count);
+
+            foreach (var row in tableRows)
             {
-                _logger.Info($"Scraping page [{page.URL}]");
-                driver.Navigate().GoToUrl(page.URL);
-                _logger.Info("page loaded");
-
-                // Wait for table to load
-                new WebDriverWait(driver, TimeSpan.FromSeconds(3))
-                    .Until(ExpectedConditions.ElementExists(
-                        string.IsNullOrWhiteSpace(page.TableId) ? By.ClassName(page.TableClass) : By.Id(page.TableId)
-                        ));
-
-                _logger.Info("finding rows");
-                var tableRows = driver.FindElements(By.XPath(page.TableRowsXPath));
-                _logger.Info("Table rows count = " + tableRows.Count);
-
-                foreach (var row in tableRows)
-                {
-                    var rowData = ReadRowData(row, page.ColumnMappings);
-                    tableData.Add(rowData);
-                }
+                var rowData = ReadRowData(row, page.ColumnMappings);
+                tableData.Add(rowData);
             }
+            
 
             return tableData;
         }
