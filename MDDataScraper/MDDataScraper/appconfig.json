@@ -1,7 +1,7 @@
 ﻿{
   "ScrapPages": [
     {
-      "url": "",
+      "url": "https://www.barchart.com/futures/quotes/BVY00/price-history/historical",
       "FilePath": "BVY00.csv",
       "ignore": true,
       "tableId": "",
